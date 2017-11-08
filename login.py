@@ -38,6 +38,9 @@ def a():
 	
 	id=t1.get()
 	password=t2.get()
+	if id=='' or password=='':
+		tkinter.messagebox.showinfo(title="message",message="用户名或密码为空")
+		return
 	try:
 		global header
 		# global id
@@ -71,25 +74,43 @@ def a():
 		ff.writelines(id+"\n")
 		ff.writelines(password)
 		ff.close()
-
 		msg=str(data,encoding="UTF-8")
 		b=msg.split(',',6)
 		# print(b[1])
 		# c=b.split(':',2)
 		# print(c[1])
-		c=b[1].split(':',2)
+		c=b[0].split(':',2)
 		# print(c[1])
+		m=b[1].split(':',2)
 		d=c[1]
 		f=d[1:-1]
+		tip=m[1]
+		top=tip[1:-1]
+		if c[1]=="success":
+			# print("success")
+			tkinter.messagebox.showinfo(title="message",message=top)
+		elif c[1]=="false":
+			if top=="用户已在线，不需要再次认证":
+				print(top)
+				tkinter.messagebox.showinfo(title="message",message=top)
+			elif top=="用户名或密码错误":
+				print(top)
+				tkinter.messagebox.showinfo(title="message",message=top)
+			else:
+				print("Error")
+				tkinter.messagebox.showinfo(title="message",message=top)
+
+
 		# print(f)#最终分割出来的结果msg:
 		# label=Label(root,text=f).pack()
 		# Message("asdf")
-		tkinter.messagebox.showinfo(title='message',message=f)
+		# tkinter.messagebox.showinfo(title="message",message=f)
 	except:
-		tkinter.messagebox.showinfo(title='Error',message='Error')
+		# tkinter.messagebox.showinfo(title="Error",message="Error")
+		tkinter.messagebox.showinfo(title="message",message="Error:002")
 
 header={
-#'POST /ac_portal/login.php HTTP/1.1',
+#"POST /ac_portal/login.php HTTP/1.1",
 'Host': '1.1.1.2',
 'Connection': 'keep-alive',
 'Content-Length': '65',
@@ -129,13 +150,25 @@ if __name__ == '__main__':
 		ff.close()
 	else:
 		try:
-			os.mkdir(r"D:\login")
+			if os.path.exists(r"D:\login"):
+				ff=open(r"D:\login\info.txt")
+				ff.close()
+			else:
+				os.mkdir("D:\login")
+				ff=open(r"D:\login\info.txt")
+				ff.close()
 		except:
+			# tkinter.messagebox.showinfo(title="message",message='Error:001')
 			pass
+			# ff=open(r"D:\login\info.txt","w")
+			# ff.close()
+			
+			# t1.set=(" ")
 		ff=open(r"D:\login\info.txt","w")
 		ff.close()
-	t1.set(id.strip())
-	t2.set(password.strip())
+	if(os.path.exists(r"D:\login\info.txt")):
+		t1.set(id.strip())
+		t2.set(password.strip())
 	entry1=Entry(root,textvariable=t1,width=30).pack()
 	entry2=Entry(root,textvariable=t2,width=30).pack()
 	btn=Button(root,text='sign in',command=a,width=30)
